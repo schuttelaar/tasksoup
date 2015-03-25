@@ -1,6 +1,5 @@
-rm database/data2.sql
-touch database/data2.sql
-sqlite3 database/data2.sql < schema.sql
-chmod uog+w database/data2.sql
-chown -R www-data:www-data database
+rm database/data.sql
+touch database/data.sql
+sqlite3 database/data.sql < schema.sql
+chmod uog+w database/data.sql
 
