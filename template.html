@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" >
+		<title>TaskSoup - Simple Work Planning Tool</title>
+		<link rel="icon" href="kwikplan.ico" type="image/x-icon"/>
+		<link rel="shortcut icon" href="kwikplan.ico" type="image/x-icon"/>
+		<link rel="stylesheet" type="text/css" href="styling.css">
+		<script src="scripts.js" ></script>
+		<script src="extensions.js"></script>
+	</head>
+<body>
+
+<!-- cut:toolbar -->
+<div id="toolbar">
+	<h1 style="cursor:help;" title="TaskSoup - a simple work planning tool.">TaskSoup</h1>
+	<div class="right">
+		<!-- cut:yearSelector -->
+		<form style="display:inline" action="/" method="get">
+			<input type="hidden" name="c" value="selectyear" />
+			<select title="Select a year to view all the periods of the current team in that year." name="year">
+				<!-- cut:yearOption -->
+				<option data-stampte="#selected?#" value="#year#">#year#</option>
+				<!-- /cut:yearOption -->
+			</select>
+			<input title="Select this year." type="submit" value="OK" />
+		</form>&nbsp;
+		<!-- /cut:yearSelector -->
+		<a title="Add a new member." href="?c=edituser&amp;id=0">ADD USER</a>
+		<a title="Add a new team." href="?c=editteam&amp;id=0">ADD TEAM</a>
+		<a title="Add a new period." href="?c=editperiod&amp;id=0">ADD PERIOD</a>
+		<a title="Open the KwikPlan User Manual." href="#" onclick="window.open('/manual.html','Manual','menubar=no,location=no,width=300,height=300,scrollbars=yes,top=100,left=100,toolbar=no,menubar=no')">HELP↗</a>
+		<a title="Tools" href="#"  onclick="window.open('/tools.php','Tools','menubar=no,location=no,width=300,height=300,scrollbars=yes,top=100,left=100,toolbar=no,menubar=no')" >DB↗</a>
+		<a href="#" title="About KwikPlan." onclick="alert('KwikPlan, a simple work planning tool.\nwritten by Gabor de Mooij.\nMost of this app has been written in 3 evenings and 3 lunch breaks.\nThis app is less than 500 lines of PHP code\nand less than 50 lines of JS (excluding html, css, chart and manual).');">?</a>
+	</div>
+</div>
+<!-- /cut:toolbar -->
+
+<!-- cut:sidebar -->
+<div id="sidebar">
+	<span title="These are the members of the currently selected team." class="header help">MEMBERS</span>
+	<table>
+		<!-- cut:user -->
+		<tr>
+			<td width="80%" >
+				<a title="Edit the profile of this member." href="#linkToUserEditor#">#userDisplayName#</a>
+			</td>
+			<td class="#workLoadClassification?#"><b title="Hours booked.">#booked#</b>/<span title="Hours available.">#available#</span></td>
+		</tr>
+		<!-- /cut:user -->
+	</table>
+	<span title="This is a list of all teams available in the system." class="header help">TEAMS</span>
+	<table>
+		<!-- cut:team -->
+		<tr class="#selected?#">
+			<td colspan="2">
+				<a title="Select this team." href="#linkToTeamView#">#teamDisplayName#</a>
+			</td>
+		</tr>
+		<!-- /cut:team -->
+	</table>
+	<span title="This is a list of all periods/sprints associated with the currently selected team in this year." class="header help">PERIODS IN #year#</span>
+	<div class="inline-scroll">
+		<table>
+			<!-- cut:period -->
+			<tr class="#selected?#">
+				<td width="80%">
+					<a title="Select this period." class="#status?#" href="#linkToPeriodView#">#periodDisplayName#</a>
+				</td>
+				<td title="Effeciency in this period (1=100% done)."><span>#eff?#</span></td>
+			</tr>
+			<!-- /cut:period -->
+		</table>
+	</div>
+</div>
+<!-- /cut:sidebar -->
+
+<!-- cut:noTasksYet -->
+<div id="notasks">
+There are no tasks yet for this period.<br>
+You can now 
+<a href="#linkToAddTask#" title="Click here to add a new task to this period." >add</a>
+ a new task to this period or 
+<a href="#linkToPeriodEditor#" title="Click here to edit this period." >edit</a> this period
+or <a href="#linkToTeamEditor#" title="Click here to edit the currently selected team.">change the team</a>.
+</div>
+<!-- /cut:noTasksYet -->
+
+<!-- cut:taskList -->
+<form id="main" action="?c=editwork" method="post">
+	<table class="sortable" id="data_task_list" data-period-start="#from#" data-period-end="#til#">
+		<thead>
+			<tr>
+				<th><div style="width:40px;"><span style="display:none">ID</span><input title="Select/deselect all tasks." type="checkbox" id="selectall"></div></th>
+				<th><div title="People working on the task." style="width:120px;text-align:center;">people</div></th>
+				<th><div title="Hours booked for this task." style="width:40px;">hrs</div></th>
+				<th><div title="Deadline for this task and progress." style="width:120px;text-align:center;">due/progress</div></th>
+				<th><div title="Priority of this task." style="width:40px;text-align:center;">prio</div></th>
+				<th title="Customer"><div style="width:180px">client</div></th>
+				<th title="Name of the task." style="width:100%;">name</th>
+			</tr>
+		</thead>
+		<tbody>
+			<!-- cut:task -->
+			<tr>
+				<td title="Add task ID # #id# to selection." style="text-align:center;">
+					<span style="display:none">#id#</span>
+					<input type="checkbox" name="tasks[]" value="#id#" >
+				</td>
+				<td class="no-padding">
+					<div style="text-align:left" class="medium column-container">
+						<!-- cut:photo -->
+						<img class="photo" src="#sourceURL#" alt="#description#" title="#tooltip# is working on this task!">
+						<span style="display:none">#description#</span>
+						<!-- /cut:photo -->
+					</div>
+				</td>
+				<td title="#hoursLeftInPeriod# avail. hours left in period." style="text-align:center">
+					<span data-start="#start#" data-end="#end#" >#hours#</span> 
+				</td>
+				<td title="Progress: #progressBarWidth#% complete." class="no-padding">
+					<div class="column-container">
+						<span class="#progressColor#">
+							#progressText#
+						</span>
+						<div class="progress bar" style="width:#progressBarWidth#%;"></div>
+					</div>
+				</td>
+				<td title="This task has priority level: #priorityLevel#." class="prio level#priorityLevel#">
+					#priorityLabel#
+				</td>
+				<td title="Contact: #contact?#" data-client="#client?#">#client?#</td>
+				<td title="Edit task ID #id#.">
+					<a title="#tooltip?#" class="#status?#" href="#linkToTaskEditor#">#name#</a>
+				</td>
+			</tr>
+			<!-- /cut:task -->
+		</tbody>
+		<tfoot>
+			<tr>
+				<td colspan="2" style="text-align:right">Total hours&nbsp;</td>
+				<td><b>#totalHours#</b></td>
+				<td colspan="4">#information#</td>
+			</tr>
+		</tfoot>
+	</table>
+	<div class="clear"></div>
+	<div class="actions">
+		<a href="#linkToTeamEditor#" title="Edit the currently selected team." >EDIT TEAM</a>
+		<!-- cut:periodButtons -->
+			<a title="Edit the currently selected period." href="#linkToPeriodEditor#" >EDIT PERIOD</a>
+			<a title="Add a new task to the currently selected period." href="#linkToAddTask#" >ADD TASK</a>
+		<!-- /cut:periodButtons -->
+		<!-- cut:operations -->
+		<select title="Select an operation to apply to the selected tasks." name="operation">
+			<option title="Select an operation in this list to apply to the selected tasks." value="0">Select action&hellip;</option>
+			<option title="Move the selected tasks to the next period of this team." value="next">Move selection to next period</option>
+			<option title="Copy the selected tasks to the next period of this team (just the tasks)." value="nextcopy">Copy selection to next period</option>
+			<option title="Mark all selected tasks as done." value="done">Mark selection as done</option>
+			<option title="Mark all selected tasks as todo (not done yet)." value="notdone">Mark selection as todo</option>
+		</select>
+		<input title="Apply the specified operation to the current task selection." type="submit" class="danger" value="APPLY" />
+		<div class="right">
+		<a id="xls" download="export.xls" title="Click on this link to download an export of this task list." >XLS</a>
+		<a id="html" download="export.html" title="Click on this link to download an export of this task list.">HTML</a>
+		</div>
+		<!-- /cut:operations -->
+		<br>
+		<br>
+		<p class="grey">
+			This period is <b>#closed?#</b>.<br>
+			The link to this period is: <b>#link#</b>.
+		<br>
+		<br>
+		Legenda <b class="help" title="You can create those icons by entering the corresponding code.">special icons</b>:
+		<br>
+		<b title="This means you cannot start with a task because some required material is missing." class="icon">&#128163;</b> !!  Indicates missing resources for a task
+		<br>
+		<b title="This means you send the product to the customer and you are waiting for feedback." class="icon">&#128666;</b> [d] Indicates product or result has been delivered
+		<br>
+		<b title="This means the task is actually a support ticket, a helpdesk call or training." class="icon">&#128222;</b> [s] Support ticket
+		<br>
+		<b title="This means you cannot start with this task or you have run into trouble and you require assistance." class="icon">&#127868;</b> [h] Assistance required
+		</p>
+	</div>
+</form>
+<!-- /cut:taskList -->
+
+<!-- cut:periodEditor -->
+<div class="dialog">
+<div class="titlebar">PERIOD</div>
+	<form method="post" action="#actionURL#" >
+	<div class="left half">
+		<div class="field">
+			<label for="field_start" title="Please enter the start date of this period, required.">Start of period</label>
+			<input id="field_start" title="Enter the start date of this period." placeholder="YYYY-MM-DD" name="start" type="date" pattern="\d\d\d\d\-\d\d-\d\d" value="#start#" required />
+		</div>
+		<div class="field">
+			<label for="field_end" title="Please enter the end date of this period, required.">End of period</label>
+			<input id="field_end" title="Enter the end date of this period." placeholder="YYYY-MM-DD" name="end" type="date" pattern="\d\d\d\d\-\d\d-\d\d" value="#end#" required />
+		</div>
+		<div class="field">
+			<label title="On closing this period a new efficiency factor will be calculated.">Status</label>
+			<input title="Mark period as closed." data-stampte="#checkedClosed?#" type="radio" name="closed" value="1" >closed&nbsp;
+			<input title="Mark period as open." data-stampte="#checkedOpen?#" type="radio" name="closed" value="0" >open
+			<br>
+			<br>
+			<p style="color:#888;">
+				On closing this period a new efficiency factor will be calculated.
+			</p>
+		</div>
+	</div>
+	<div class="right half">
+		<div class="field">
+			<label for="field_team" title="Please select the team you are creating a period for.">Team</label>
+			<select id="field_team" title="Select the team this period belongs to." name="team_id">
+				<!-- cut:teamOption -->
+				<option title="Team #name# (ID: #teamID#)" data-stampte="#selected?#" value="#teamID#">
+					#name#
+				</option>
+				<!-- /cut:teamOption -->
+			</select>
+		</div>
+		<!-- cut:attendance -->
+		<div class="field">
+			<label for="field_att_#userID#" title="Please specify how many hours this member will be available during this period.">#name#</label>
+			<input id="field_att_#userID#" title="For how long do you want to book this person ?" placeholder="40" name="attendance[#userID#]" type="number" min="0" max="200" value="#hoursAvailable#" />
+		</div>
+		<!-- /cut:attendance -->
+	</div>
+	<div class="clear"></div>
+	<div class="buttons">
+		<input class="right" title="Save your changes to the database." type="submit" value="SAVE" />
+		<a title="Discard changes and go back to task board." class="left" href="/">CANCEL</a>
+		<!-- cut:deleteButton -->
+		<a title="This button will DELETE this period !" data-warning="Are you sure you want to delete this period ?" class="left danger" href="#linkToDeletePeriod#">DELETE</a>
+		<!-- /cut:deleteButton -->
+	</div>
+	<div class="clear"></div>
+	</form>
+</div>
+<!-- /cut:periodEditor -->
+
+
+<!-- cut:userEditor -->
+<div class="dialog">
+<div class="titlebar">MEMBER</div>
+	<form method="post" action="#actionURL#" >
+	<div class="left half">
+		<div class="field">
+			<label for="field_fullname" title="Please enter your full name, this is a free text field.">Full name</label>
+			<input id="field_fullname" title="Full name of the member, free text field (not shown)." placeholder="Hercule Poirot" name="fullname" type="text" value="#fullname#" required />
+		</div>
+		<div class="field">
+			<label for="field_nickname" title="Please enter your display name or nick name, this name will be shown throughout the application.">Display name (or nickname)</label>
+			<input id="field_nickname" title="A short display name (maximum 12 characters)." maxlength="12" placeholder="Poirot" name="nick" type="text" value="#nick#" required />
+		</div>
+		<div class="field">
+			<label for="field_email" title="Please enter your e-mail address (optional).">Email</label>
+			<input id="field_email" title="Email address." placeholder="poirot@whitehavenmansions.co.uk" name="email" type="email" value="#email#" />
+		</div>
+		<div class="field">
+			<label for="field_phone" title="Please enter youtr phone number (optional).">Phone</label>
+			<input id="field_phone" title="Phone number." placeholder="+00 00 0000000" name="phone" type="phone" value="#phone#" />
+		</div>
+		<div class="field">
+			<label for="field_photo" title="Please provide an URL to a picture you would like to associate with yourself.">Photo</label>
+			<input id="field_photo" title="An URL where we can find a picture of this person (corporate site?)." placeholder="http://" name="photo" type="url" value="#photo#" />
+		</div>
+	</div>
+	<div class="right half">
+		<div class="field">
+			<label for="field_teams" title="Please select the teams you participate in.">Team</label>
+			<select id="field_teams" title="Teams this person participates in." required multiple name="teams[]">
+				<!-- cut:teamOption -->
+				<option value="#teamID#" data-stampte="#selected?#" >#name#</option>
+				<!-- /cut:teamOption -->
+			</select>
+		</div>
+	</div>
+	<div class="clear"></div>
+	<div class="buttons">
+		<input title="Save your changes to the database." class="right" type="submit" value="SAVE" />
+		<a title="Discard changes and go back to task board." class="left" href="/">CANCEL</a>
+		<!-- cut:deleteButton -->
+		<a title="This button will DELETE this team member!" class="left danger" href="#linkToDeleteUser#">DELETE</a>
+		<!-- /cut:deleteButton -->
+	</div>
+	<div class="clear"></div>
+	</form>
+</div>
+<!-- /cut:userEditor -->
+
+
+<!-- cut:teamEditor -->
+<div class="dialog">
+	<div class="titlebar">TEAM</div>
+	<form method="post" action="#actionURL#" >
+		<div class="field">
+			<label for="field_team_name" title="Please enter the name of the team, required.">Team name</label>
+			<input id="field_team_name" title="Name of the team." placeholder="DEV1" type="text" name="name" value="#name#" required />
+		</div>
+		<div class="field">
+			<label for="field_team_description" title="Here is some room for a description of the team (or some notes). This field is optional.">Description</label>
+			<textarea id="field_team_description" title="Description of the team (free text field)." placeholder="Your team description here..." name="description">#description#</textarea>
+		</div>
+		<div class="clear"></div>
+		<div class="buttons">
+			<input title="Save your changes to the database." class="right" type="submit" value="SAVE" />
+			<a title="Discard changes and go back to task board." class="left" href="/">CANCEL</a>
+			<!-- cut:deleteButton -->
+			<a title="This button will DELETE this team !" class="left danger" href="#linkToDeleteTeam#">DELETE</a>
+			<!-- /cut:deleteButton -->
+		</div>
+		<div class="clear"></div>
+	</form>
+</div>
+<!-- /cut:teamEditor -->
+
+
+<!-- cut:taskEditor -->
+<div class="dialog">
+	<div class="titlebar">TASK #<b>#taskID?#</b> - <i>#name#</i></div>
+	<form method="post" action="#actionURL#" >
+	<div class="left half">
+		<div class="field">
+			<label for="field_name" title="Please enter the name of the task, required.">Task name</label>
+			<input id="field_name" title="Name of the task." maxlength="80" placeholder="Create application" type="text" name="name" value="#name#" required />
+		</div>
+		<div class="field">
+			<label for="field_client" title="Please enter the name of the client (optional).">Client</label>
+			<input id="field_client" title="Name of the customer." placeholder="Customer" type="text" name="client" value="#client#" />
+		</div>
+		<div class="field">
+			<label for="field_contact" title="Please enter the name of the contact for this client (optional).">Contact</label>
+			<input id="field_contact" title="Contact details for this task." placeholder="Mr. Customer" type="text" name="contact" value="#contact#" />
+		</div>
+		<div class="field">
+			<label for="field_project" title="Please provide a project code or project description (optional).">Project</label>
+			<input id="field_project" title="Project code, number or description." placeholder="Project code: Z083JK" type="text" name="project" value="#project#" />
+		</div>
+		<div class="field">
+			<label for="field_budget" title="Please fill in the budget for this task (optional)." >Budget</label>
+			<input id="field_budget" title="It's all about this field, isn't it?" placeholder="40k" type="text" name="budget" value="#budget#" />
+		</div>
+		<div class="field">
+			<label for="field_due" title="Please indicate a deadline for this task (optional).">Due</label>
+			<input id="field_due" placeholder="YYYY-MM-DD" title="Deadline" type="date" pattern="\d\d\d\d\-\d\d\-\d\d" name="due" value="#due#" />
+		</div>
+		
+		<div class="field"><label for="field_prio" title="Please indicate the urgency of this task.">Priority</label>
+			<select id="field_prio" title="Urgency" name="prio">
+				<!-- cut:priorityOption -->
+					<option data-stampte="#selected?#" value="#priorityLevel#">#priorityLabel#</option>
+				<!-- /cut:priorityOption -->
+			</select>
+		</div>
+		<div class="field"><label for="field_period" title="Please assign this task to a specific period for a specific team, default is the current period.">Period</label>
+			<select id="field_period" title="Use this to move a task to a different period or team." name="period_id">
+				<!-- cut:periodOption -->
+				<option #selected?# title="#fullPeriod#" value="#periodID#">#periodLabel#</option>
+				<!-- /cut:periodOption -->
+			</select>
+		</div>
+	</div>
+	<div class="right half">
+		<div class="field">
+			<label for="field_description" title="Please provide a more detailed description of the task, possibly with some examples.">Description</label>
+			<textarea id="field_description" title="Room for a more lengthy description of the task." placeholder="Top secret!" name="description">#description#</textarea>
+		</div>
+		<div class="field">
+			<label for="field_notes" title="Here is some room for additional notes about the task.">Notes</label>
+			<textarea id="field_notes" title="Notes, reminders, ideas etc." placeholder="My notes..." name="notes">#notes#</textarea>
+		</div>
+		<!-- cut:resource -->
+		<div class="field">
+			<label for="field_worker_#userID#" title="Please enter the number of hours you want this team member to work on this task.">#nick#</label>
+			<input id="field_worker_#userID#" title="For how many hours do you want to book this person for this task ?" name="work[#userID#]" type="number" min="0" max="200" value="#hours#" />
+		</div>
+		<!-- /cut:resource -->
+		<div class="field">
+			<label for="field_progress" title="Please indicate the current progress of this task.">Progress</label>
+			<input id="field_progress" title="Indicate the progress of the task." type="range" name="progress" value="#progress#" />
+		</div>
+	</div>
+	<div class="clear"></div>
+	<div class="buttons">
+			<input title="Save your changes to the database." class="right" type="submit" value="SAVE" />
+			<a title="Discard changes and go back to task board." class="left" href="/">CANCEL</a>
+			<!-- cut:deleteButton -->
+			<a title="This button will DELETE this task !" class="left danger" href="#linkToDeleteTask#">DELETE</a>
+			<!-- /cut:deleteButton -->
+	</div>
+	<div class="clear"></div>
+</form>
+</div>
+<!-- /cut:taskEditor -->
+
+
+<!-- cut:demo -->
+<style>
+	body .dialog { display:none; }
+</style>
+<script>
+	alert('PRESS ENTER TO CYCLE THROUGH SCREENS.');
+	var j = 0;
+	document.getElementById('sidebar').style.overflow='auto';
+	var dialogs = document.querySelectorAll('.dialog,#main');
+	document.body.onkeyup = function() {
+		for (var i = 0; i < dialogs.length; i ++) dialogs[i].style.display = 'none';
+		if (dialogs[j]) dialogs[j].style.display = 'block';
+		j ++ ;
+		if (j > dialogs.length) j = 0;
+	}
+</script>
+<!-- /cut:demo -->
+
+</body>
+</html>

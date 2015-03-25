@@ -1,0 +1,72 @@
+<html>
+	<head></head>
+	<body>
+	<canvas id="myChart" width="260" height="280"></canvas>
+	<script src="chartjs.js"></script>
+	<script>
+	Chart.defaults.global.scaleBeginAtZero = true;
+	Chart.defaults.global.animation = false;
+	var ctx = document.getElementById("myChart").getContext("2d");
+	var tasks = window.parent.document.querySelectorAll('[data-start]');
+	var periodRangeDef = window.parent.document.querySelectorAll('[data-period-start]')[0];
+	if (periodRangeDef) {
+		var periodStart = periodRangeDef.getAttribute('data-period-start');
+		var periodEnd   = periodRangeDef.getAttribute('data-period-end');
+		var periodStartDate = new Date(periodStart);
+		var periodEndDate   = new Date(periodEnd);
+		var days = [];
+		dones = [];
+		var totals = [];
+		var burn = [];
+		var x = 0;
+		var date = periodStartDate;
+		while(date.getTime() <= periodEndDate.getTime()) {
+			days.push((date.getMonth()+1)+'-'+(date.getDate()));
+			var total = 0;
+			var done = 0;
+			for(var j = 0; j < tasks.length; j++) {
+				var weight  = parseFloat(tasks[j].innerHTML);
+				var started = new Date(tasks[j].getAttribute('data-start'));
+				if (started.getTime() <= date.getTime()) {
+					total += weight;
+				}
+				var ended   = new Date(tasks[j].getAttribute('data-end'));
+				if (ended.getTime() <= date.getTime()) {
+					done += weight;
+				}
+			}
+			burn = total - done;
+			dones.push(done);
+			totals.push(total);
+			date.setDate(date.getDate()+1);
+		}
+		var data = {
+			labels: days,
+			datasets: [
+				{
+					label: "My First dataset",
+					fillColor: "rgba(240,200,200,0.2)",
+					strokeColor: "#FFA500",
+					pointColor: "#FFA500",
+					pointStrokeColor: "#fff",
+					pointHighlightFill: "#fff",
+					pointHighlightStroke: "#FFA500",
+					data: dones
+				},
+				{
+					label: "My Second dataset",
+					fillColor: "rgba(240,240,200,0.2)",
+					strokeColor: "#389",
+					pointColor: "#389",
+					pointStrokeColor: "#fff",
+					pointHighlightFill: "#fff",
+					pointHighlightStroke: "#389",
+					data: totals
+				}
+			]
+		};
+		if (dones.length>1) myLineChart = new Chart(ctx).Line(data);
+	}
+	</script>
+	</body>
+</html>
