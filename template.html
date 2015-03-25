@@ -39,7 +39,7 @@
 <!-- cut:sidebar -->
 <div id="sidebar">
 	<span title="These are the members of the currently selected team." class="header help">MEMBERS</span>
-	<table>
+	<table class="sidebar-users">
 		<!-- cut:user -->
 		<tr>
 			<td width="80%" >
@@ -50,7 +50,7 @@
 		<!-- /cut:user -->
 	</table>
 	<span title="This is a list of all teams available in the system." class="header help">TEAMS</span>
-	<table>
+	<table class="sidebar-teams">
 		<!-- cut:team -->
 		<tr class="#selected?#">
 			<td colspan="2">
@@ -61,7 +61,7 @@
 	</table>
 	<span title="This is a list of all periods/sprints associated with the currently selected team in this year." class="header help">PERIODS IN #year#</span>
 	<div class="inline-scroll">
-		<table>
+		<table class="sidebar-periods">
 			<!-- cut:period -->
 			<tr class="#selected?#">
 				<td width="80%">

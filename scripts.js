@@ -55,4 +55,11 @@ window.onload = function(){
 		xlsBtn.setAttribute('href','data:application/vnd.ms-excel;base64,' + base64(html));
 		htmlBtn.setAttribute('href','data:text/html;base64,' + base64(html));
 	}
+	window.onkeyup = function(e){
+		if (e.ctrlKey && (e.which===190 || e.which == 84)) {
+			var cur = document.querySelector('.sidebar-teams .selected'); 
+			var nxt = cur.nextElementSibling || document.querySelector('.sidebar-teams tr:first-child');
+			document.location = nxt.cells[0].children[0].href;
+		}
+	}
 }
