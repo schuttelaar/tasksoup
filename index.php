@@ -120,7 +120,7 @@ if ( $currentTeam->id && ( $cmd === 'selectyear' || !$currentPeriod->id ) ) {
 	}
 }
 
-$efficiency   = R::getCell( 'SELECT AVG(efficiency) FROM ( SELECT * FROM period WHERE closed = ? AND team_id = ? LIMIT 25 ) ', array( TRUE, $currentTeam->id ) );
+$efficiency   = R::getCell( 'SELECT AVG(efficiency) FROM ( SELECT * FROM period WHERE closed = ? AND team_id = ? ORDER BY `end` DESC LIMIT 25 ) ', array( TRUE, $currentTeam->id ) );
 if ($efficiency == 0) $efficiency = 0.7;
 $availableHrs = R::getCell( 'SELECT SUM(hours) FROM attendance WHERE period_id = ? ', array( $currentPeriod->id ) );
 $realAvailHrs = $availableHrs * $efficiency;
