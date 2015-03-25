@@ -494,7 +494,7 @@ switch( $cmd ) {
 			$periodOption = $taskEditor->getPeriodOption()
 				->setFullPeriod( date( 'l d F Y', strtotime( $period->start ) ).' - '.date( 'l d F Y', strtotime( $period->end ) ) )
 				->setPeriodID($period->id)
-				->setPeriodLabel("{$period->start} - {$period->end} ({$period->team->name})");
+				->setPeriodLabel( date( 'd M', strtotime( $period->start ) ) . ' - ' . date( 'd M',  strtotime( $period->end ) ) . " ({$period->team->name})" );
 			if ( $period->id == $task->period->id ) $periodOption->setSelected( 'selected' );
 			$taskEditor->add($periodOption);
 		}
