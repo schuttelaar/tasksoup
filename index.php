@@ -218,7 +218,11 @@ switch( $cmd ) {
 
 			if ( $currentPeriod ) {
 				$nextPeriod = reset( $currentTeam
-					->withCondition('start>=? ORDER BY start ASC LIMIT 1', array( $currentPeriod->end ) )
+					->withCondition( 'start>=? ORDER BY start ASC LIMIT 1', array( $currentPeriod->end ) )
+					->ownPeriodList
+				);
+				$prevPeriod = reset( $currentTeam
+					->withCondition( 'end<=? ORDER BY end DESC LIMIT 1', array( $currentPeriod->start ) )
 					->ownPeriodList
 				);
 			}
@@ -226,6 +230,8 @@ switch( $cmd ) {
 			foreach( R::batch( 'task',$_POST['tasks']) as $task )
 				if ( $_POST['operation'] === 'next' && $nextPeriod )
 					R::store( $task->setAttr( 'period', $nextPeriod ) );
+				elseif ( $_POST['operation'] === 'prev' && $prevPeriod )
+					R::store( $task->setAttr( 'period', $prevPeriod ) );
 				elseif ( $_POST['operation'] === 'nextcopy' && $nextPeriod )
 					R::store( $task->setAttr('id', 0)->setAttr( 'period', $nextPeriod ) );
 				elseif ( $_POST['operation'] === 'done' )
