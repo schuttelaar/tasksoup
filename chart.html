@@ -31,7 +31,7 @@
 					total += weight;
 				}
 				var ended   = new Date(tasks[j].getAttribute('data-end'));
-				if (ended.getTime() <= date.getTime()) {
+				if (ended.getTime() <= date.getTime() && tasks[j].parentElement.parentElement.querySelector('.done')) {
 					done += weight;
 				}
 			}
