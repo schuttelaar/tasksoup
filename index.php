@@ -374,7 +374,7 @@ switch( $cmd ) {
 		$information = "<b title=\"Hours still to do.\">{$stillTodoHours}</b>/<span title=\"Total hours booked.\">{$total}<span>
 		 (".count($tasks)." tasks) - {$percentageDone}% done @ 
 		 <span title=\"Average efficiency (done/total) over all periods for this team.\">{$displayEfficiency}</span> 
-		 efficieny (max workload: {$displayRealAvailableHours}/".(intval($availableHrs))." hrs. )";
+		 efficiency (max workload: {$displayRealAvailableHours}/".(intval($availableHrs))." hrs. )";
 		if ( count($tasks) ) $taskList->add( $taskList->getOperations() );
 
 		$taskList->setFrom($currentPeriod->start)
