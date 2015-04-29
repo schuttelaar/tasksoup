@@ -139,7 +139,7 @@ switch( $cmd ) {
 			$samePeriod = reset(
 				$newTeam
 					->withCondition(
-					' start >= ? ORDER BY start ASC LIMIT 1 ', array( $currentPeriod->start ) )
+					' end >= ? ORDER BY start ASC LIMIT 1 ', array( $currentPeriod->start ) )
 					->ownPeriodList
 			);
 			if ($samePeriod->id) {
