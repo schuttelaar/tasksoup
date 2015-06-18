@@ -100,7 +100,7 @@ or <a href="#linkToTeamEditor#" title="Click here to edit the currently selected
 		<tbody>
 			<!-- cut:task -->
 			<tr>
-				<td title="Add task ID # #id# to selection." style="text-align:center;">
+				<td title="Add task ID # #id# to selection." style="text-align:center;vertical-align:middle;">
 					<span style="display:none">#id#</span>
 					<input type="checkbox" name="tasks[]" value="#id#" >
 				</td>
@@ -128,7 +128,8 @@ or <a href="#linkToTeamEditor#" title="Click here to edit the currently selected
 				</td>
 				<td title="Contact: #contact?#" data-client="#client?#">#client?#</td>
 				<td title="Edit task ID #id#.">
-					<div class="column-container" style="text-align:left"><a title="#tooltip?#" class="#status?#" href="#linkToTaskEditor#">#name#</a></div>
+					<div class="column-container" style="text-align:left"><a title="#tooltip?#" class="#status?#" href="#linkToTaskEditor#">#name#</a>
+					<span class="task-id" title="The database ID of this task is: # #id#."># #id#</span></div>
 				</td>
 			</tr>
 			<!-- /cut:task -->

@@ -35,6 +35,7 @@ h1 { display:inline; color:#389; line-height:24px;}
 .level0 { background-color: #AAAACC; }
 .level4 { background-color: #FFA500; }
 .level5 { background-color: #FF2222;  }
+.task-id { opacity:0.4;float:right;margin-right:10px; }
 .closed,.grey { color: #888; }
 .done { color: #389; }
 .danger,.red { color: #f55; margin-right:20px; font-weight:bold; }
