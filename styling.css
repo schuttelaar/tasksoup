@@ -25,7 +25,7 @@ select[multiple] { height:auto;}
 table { border-collapse: collapse; padding: 0; margin: 0; border-collapse: collapse; width: 100%; }
 table tr:nth-child(odd) { background-color: #EEE; }
 table tr:nth-child(even) { background-color: #FFF; }
-table td, table th { border: 1px #ccc solid; line-height:28px; height:28px; vertical-align:middle; padding-left:2px; cursor:pointer;	}
+table td, table th { border: 1px #ccc solid; line-height:28px; height:28px; vertical-align:middle; padding-left:2px;	}
 table tr:nth-child(even).selected,table tr:nth-child(odd).selected { background-color: #FFA500; }
 table td img { height: 28px; }
 .buttons a, .actions a, #toolbar a { line-height: 28px; margin-right: 20px; white-space:nowrap; }
