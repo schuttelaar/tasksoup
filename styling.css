@@ -45,7 +45,7 @@ iframe { border-width:0;}
 .small { width: 40px; }
 .medium { width: 120px; }
 .no-padding { padding:0; }
-.icon {width:30px;display:inline-block;cursor:help;}
+.icon {width:30px;font-size:30px;text-align:center;vertical-align:middle;display:inline-block;cursor:help;}
 #notasks { text-align:center; margin-top:40px; color:#888; }
 .help { cursor:help;}
 .inline-scroll { max-height: 146px; overflow-y: scroll;}
