@@ -199,9 +199,14 @@ or <a href="#linkToTeamEditor#" title="Click here to edit the currently selected
 			<input id="field_end" title="Enter the end date of this period." placeholder="YYYY-MM-DD" name="end" type="date" pattern="\d\d\d\d\-\d\d-\d\d" value="#end#" required />
 		</div>
 		<div class="field">
-			<label title="On closing this period a new efficiency factor will be calculated.">Status</label>
-			<input title="Mark period as closed." data-stampte="#checkedClosed?#" type="radio" name="closed" value="1" >closed&nbsp;
-			<input title="Mark period as open." data-stampte="#checkedOpen?#" type="radio" name="closed" value="0" >open
+			<label for="close-period">
+			<input id="close-period" title="Mark period as closed." data-stampte="#checkedClosed?#" type="radio" name="closed" value="1" >
+			closed
+			</label>
+			<label for="open-period">
+			<input id="open-period" title="Mark period as open." data-stampte="#checkedOpen?#" type="radio" name="closed" value="0" >
+			open
+			</label>
 			<br>
 			<br>
 			<p style="color:#888;">
