@@ -43,6 +43,7 @@ window.onload = function(){
 		tasks[j].innerHTML = tasks[j].innerHTML.replace('[d]','<span style="cursor:help" title="The result of this task has been delivered. Awaiting feedback.">&#128666;</span>');	
 		tasks[j].innerHTML = tasks[j].innerHTML.replace('[s]','<span style="cursor:help" title="Support ticket.">&#128222;</span>');	
 		tasks[j].innerHTML = tasks[j].innerHTML.replace('[h]','<span style="cursor:help" title="Assistance required... or HELP ME!">&#127868;</span>');	
+		tasks[j].innerHTML = tasks[j].innerHTML.replace('[e]','<span style="cursor:help" title="Estimation required...">&#9749;</span>');
 	}
         var tds = document.querySelectorAll('#data_task_list tr td[data-client]');
         for (var j = 0; j < tds.length; j++) { tds[j].setAttribute('data-client', tds[j].getAttribute('data-client').toLowerCase()) } // for case insensitive compare
