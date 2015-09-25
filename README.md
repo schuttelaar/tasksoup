@@ -2,6 +2,10 @@
 
 TaskSoup is a compact (about 500 lines of code) scrum-like (but not entirely Scrum) planning tool.
 
+Website
+
+http://schuttelaar.github.io/tasksoup
+
 ## Features
 
 * Multiple (Scrum) teams
