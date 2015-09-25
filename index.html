@@ -25,6 +25,51 @@
 <p>TaskSoup is an easy to use, simple project management tool for agile teams. TaskSoup focuses on simplicity, both in user experience and in code. Simplicity is not the same as easy-of-use. Some people might find TaskSoup clunky or old-school and that's just fine with us. Simplicity is about predictability and understanding. Everyone can understand the way TaskSoup works. TaskSoup tries to keep the workflow processes as explicit as possible. Sometimes this leads to a less elegant user interface but again, we don't care because the focus is on Simplicity. TaskSoup also does not offer a lot of eye-candy, it has a simple design that looks the same on most devices and browsers. The entire source code is about 500 lines of PHP code and 80 lines of JavaScript. We try to keep TaskSoup small and compact and we won't implement many new features.</p>
 
 <h3>
+<a id="features-functional" class="anchor" href="#features-functional" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features (functional)</h3>
+
+<ul>
+<li>Supports multiple teams with varying sprint lengths</li>
+<li>Supports overlapping periods</li>
+<li>Automatic intelligent task sorting</li>
+<li>Supports irregular working hours, holidays and absence </li>
+<li>Easily move or copy chunks of tasks to 'nearby' periods</li>
+<li>Members can participate in various teams</li>
+<li>Members can be booked for various teams in various teams within the same period</li>
+<li>Progress indicator per story</li>
+<li>Warning when deadline for task approaches</li>
+<li>Burndown chart (hours done versus total)</li>
+<li>Emoji based status icons for smart communication</li>
+<li>Automatic team performance measurements over time</li>
+<li>Details performance reports per team (incl. focus factor)</li>
+<li>Warning if workload is too much (based on historical data)</li>
+<li>Highlight task of specific employee (JavaScript)</li>
+<li>Export to Spreadsheet (including Excel) and HTML</li>
+<li>Web Friendly: fully bookmarkable, text-only, no AJAX/FLASH</li>
+<li>Easy Backups</li>
+</ul>
+
+<h3>
+<a id="features-technical" class="anchor" href="#features-technical" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features (technical)</h3>
+
+<ul>
+<li>Tiny codebase, just 500 lines of very readable PHP code</li>
+<li>No images, little CSS, very fast and smooth on every device</li>
+<li>Works well, even on very old browsers</li>
+<li>Not a single bug has been found in one year!</li>
+<li>Very secure, no SQL injections, no XSS injections</li>
+<li>Uses well tested libraries, rock solid foundation</li>
+</ul>
+
+<h3>
+<a id="differs-from-scrum" class="anchor" href="#differs-from-scrum" aria-hidden="true"><span class="octicon octicon-link"></span></a>Differs from Scrum</h3>
+
+<ul>
+<li>Measures tasks in hours rather than story points (most organizations do anyway)</li>
+<li>Allows assignment of tasks to team members (most organizations do anyway)</li>
+<li>A 'story' is called a 'task' - less terminology</li>
+</ul>
+
+<h3>
 <a id="system-requirements" class="anchor" href="#system-requirements" aria-hidden="true"><span class="octicon octicon-link"></span></a>System Requirements</h3>
 
 <ul>
@@ -39,7 +84,7 @@
 <p>Download the package from this website and extract the contents into the destination folder.
 Point your webserver to the location of the destination folder.</p>
 
-<p>TaskSoup does not rely on so-called beautiful routes, so you don't need URL rewriting capabilities: no need for .htaccess files or URL remapping configurations in your webserver.</p>
+<p>TaskSoup does not rely on url rewriting, so no need for .htaccess files or URL remapping configurations in your webserver.</p>
 
 <p>TaskSoup does not require a MySQL database. Instead it uses SQLite3, a file-based database.
 For your convenience we offer a little shell script that can create the database for you, simply run the following command in the TaskSoup destination folder:</p>
@@ -107,6 +152,85 @@ You can now enter the name of the team as well as a description.</p>
 <p>The photo field is also optional. TaskSoup will use this URL to display a picture associated with this team member when he or she is working on a task. So, while this information is optional it really improves the effectiveness of the tool and should therefore be supplied. Please note that not all photos and pictures are generally available. You might need to check if the picture can be retrieved by TaskSoup.</p>
 
 <p>The Team field on the right is the last field that needs to be filled in. You can select multiple teams to participate in by using the CTRL key or the SHIFT key.</p>
+
+<h5>
+<a id="add-periods" class="anchor" href="#add-periods" aria-hidden="true"><span class="octicon octicon-link"></span></a>Add Periods</h5>
+
+<p>To add a period, click on the 'ADD PERIOD' button.
+To specify the period enter a start date and an end date.
+All dates must be entered in ISO notation:</p>
+
+<p>YYYY-MM-DD</p>
+
+<p>Example:</p>
+
+<p>2015-12-05 (5th of December 2015)</p>
+
+<p>Next, select the team for which you would like to create a new period. Note that you can only select one team. This is because teams can have different period length preferences. Some teams work in sprints of a week, others prefer a two week sprint, and so on.</p>
+
+<p>Note that changing to a team with different members won't update the member list. You can still fill in data for members available in both teams, otherwise please press the reload button of your browser or add the period for the correct team instead (no we are not going to use AJAX here, it's not necessary at all).</p>
+
+<p>Now specify the presence of every team member for this period. For instance if you have a team member called 'Joe' you can enter the number of hours Joe can spend working for this team.</p>
+
+<h5>
+<a id="add-task" class="anchor" href="#add-task" aria-hidden="true"><span class="octicon octicon-link"></span></a>Add Task</h5>
+
+<p>To add a task click on the 'ADD TASK' button on the main screen.
+Describe the task (in Scrum terminology 'Story') in the description field and give it a name.
+You can also specify the company name of the client and a primary contact. Optionally you can specify a budget and a due date.</p>
+
+<p>Note, if you specify a due date this due date will appear in the task list on top of the progress bar. The due date will replace the progress percentage. When the deadline is near, the due date will be highlighted with a red color to notify the team about the nearing deadline. Due dates also affect the intelligent sorting mechanism.</p>
+
+<p>Using the period selector you can change the period (and team) to which to add the current task.</p>
+
+<h6>
+<a id="task-hours" class="anchor" href="#task-hours" aria-hidden="true"><span class="octicon octicon-link"></span></a>Task Hours</h6>
+
+<p>Use the team member fields to assign team members for a number of hours. This is an important part of TaskSoup. You can either have your team members estimate the number of hours required to complete this task or you can estimate the hours yourself. You can also add an 'estimation required' icon to the title by prepending the task name with '[e]' this will display the coffee cup icon next to the title indicating the estimations have yet to be verified.</p>
+
+<h6>
+<a id="priorities" class="anchor" href="#priorities" aria-hidden="true"><span class="octicon octicon-link"></span></a>Priorities</h6>
+
+<p>Using the priority indicator you can assign a priority for your task. There are 6 different priorities. Each priority is also associated with a certain approach to the task. Priorities are very important in TaskSoup, let me explain, TaskSoup has the following priority values:</p>
+
+<ol>
+<li>Time boxed</li>
+<li>-1</li>
+<li>0</li>
+<li>+1</li>
+<li>+2</li>
+<li>Ad-hoc</li>
+</ol>
+
+<h6>
+<a id="-time-boxed" class="anchor" href="#-time-boxed" aria-hidden="true"><span class="octicon octicon-link"></span></a># Time Boxed</h6>
+
+<p>This is the lowest priority. This priority also affects the estimation. Use this priority if you don't mind whether the task gets completed or not. Use this priority for tasks that you want people to work on for a certain amount of time. A time boxed task therefore does not need adequate estimation, it's just a 'reservation'. You can also use time boxed stories to include events or meetings in the task list that have a fixed duration. Time boxed tasks will appear at the bottom of the task list, just above the completed tasks.</p>
+
+<h6>
+<a id="-the--1-priority" class="anchor" href="#-the--1-priority" aria-hidden="true"><span class="octicon octicon-link"></span></a># The -1 Priority</h6>
+
+<p>This priority means the task is not very important but has to be estimated accurately and it should be completed within the current period.</p>
+
+<h6>
+<a id="-the-0-priority" class="anchor" href="#-the-0-priority" aria-hidden="true"><span class="octicon octicon-link"></span></a># The 0 Priority</h6>
+
+<p>This value represents a neutral priority. Tasks marked with the 0 priority will not be marked in any way in the task list. Most tasks should have this priority.</p>
+
+<h6>
+<a id="-the-1-priority" class="anchor" href="#-the-1-priority" aria-hidden="true"><span class="octicon octicon-link"></span></a># The +1 Priority</h6>
+
+<p>This value represents an important task. Please use this priority for so-called 'high priority tasks'. Don't use the highest values because they are supposed to be 'treated in a different way'.</p>
+
+<h6>
+<a id="-the-2-priority" class="anchor" href="#-the-2-priority" aria-hidden="true"><span class="octicon octicon-link"></span></a># The +2 Priority</h6>
+
+<p>This value is not just a priority label, it indicates something is wrong with the sprint or period. Use this priority for tasks that need to be completed as soon as possible. Use this priority for urgent tasks that are known BEFORE the sprint begins. If there is an incident during the sprint or period resulting in a new story you should use the Ad-hoc priority instead. Note that a healthy sprint should not contain this kind of stories as all tasks should be equally important. Therefore using the +2 priority is a sign of bad project management. The +2 priority tasks will appear on top of the list (but below ad-hoc) and will be marked with a nuclear warning symbol.</p>
+
+<h6>
+<a id="-ad-hoc-priority" class="anchor" href="#-ad-hoc-priority" aria-hidden="true"><span class="octicon octicon-link"></span></a># Ad-Hoc Priority</h6>
+
+<p>This is the highest priority. If you use this priority it means everybody should drop their work and begin working on this task. Use this priority if there is an incident during the sprint or period resulting in a new task. A task that has been scheduled for a period or sprint can never have this priority. This priority is reserved for those tasks that are inserted in running sprints (against Scrum rules) because of emergencies or incidents. Ad-hoc tasks are marked with a red color and a lightning symbol. Ad-hoc stories are highlighted this way to explain focus factor and efficiency fluctuations in sprints. A team with a high number of Ad-Hoc tasks cannot be expected to be very efficient because they are being interrupted all the time.</p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/schuttelaar/tasksoup">Tasksoup</a> is maintained by <a href="https://github.com/schuttelaar">schuttelaar</a>.</span>
