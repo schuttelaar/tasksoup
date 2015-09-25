@@ -232,6 +232,57 @@ You can also specify the company name of the client and a primary contact. Optio
 
 <p>This is the highest priority. If you use this priority it means everybody should drop their work and begin working on this task. Use this priority if there is an incident during the sprint or period resulting in a new task. A task that has been scheduled for a period or sprint can never have this priority. This priority is reserved for those tasks that are inserted in running sprints (against Scrum rules) because of emergencies or incidents. Ad-hoc tasks are marked with a red color and a lightning symbol. Ad-hoc stories are highlighted this way to explain focus factor and efficiency fluctuations in sprints. A team with a high number of Ad-Hoc tasks cannot be expected to be very efficient because they are being interrupted all the time.</p>
 
+<h2>
+<a id="task-list" class="anchor" href="#task-list" aria-hidden="true"><span class="octicon octicon-link"></span></a>Task List</h2>
+
+<h3>
+<a id="order-of-tasks" class="anchor" href="#order-of-tasks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Order of Tasks</h3>
+
+<p>TaskSoup uses a fixed ordering scheme. Tasks are ordered as follows:</p>
+
+<ol>
+<li>Tasks that have not been completed are always above those that have been completed</li>
+<li>Tasks with higher priorities are listed first</li>
+<li>Within priorities tasks with due dates are listed first</li>
+</ol>
+
+<h3>
+<a id="closing-a-period" class="anchor" href="#closing-a-period" aria-hidden="true"><span class="octicon octicon-link"></span></a>Closing a period</h3>
+
+<p>To close a period, click on 'EDIT PERIOD' and select the close radio button at the bottom of the form.
+After closing a period the efficiency of the team will be re-calculated.</p>
+
+<h3>
+<a id="hours" class="anchor" href="#hours" aria-hidden="true"><span class="octicon octicon-link"></span></a>Hours</h3>
+
+<p>On the left side you see the team members and their availability. Next to each member you see two numbers. The second number indicates the hours available, the first number tells you how many hours have been assigned to this member for the current period.</p>
+
+<p>If you assign more hours to a member than available the number turn red.</p>
+
+<h3>
+<a id="team-efficiency-statistics" class="anchor" href="#team-efficiency-statistics" aria-hidden="true"><span class="octicon octicon-link"></span></a>Team Efficiency Statistics</h3>
+
+<p>At the bottom of the Task List you see the statistics for your team, for example:</p>
+
+<pre><code>44/138 (20 tasks) - 32% done @ 0.7 efficiency (max workload: 100/146 hrs. )
+</code></pre>
+
+<p>The first number is the number of hours still on the todo list (44), the second number (138) is the total number of hours in this period. Next to these numbers you see the number of tasks in this period (20), followed by the percentage of tasks that has been completed (32%).</p>
+
+<p>After the @ symbol, you see the efficiency factor. In this case 0.7. This factor is calculated based on the performance of the team over 25 periods. If no efficiency factor can be calculated, the default of 0.7 will be used. The efficiency factor is defined as the average percentage of tasks completed per period. Normal efficiency factors (also known as focus factors) range between 0.6 and 0.9. Factors under 0.6 should be treated as a symptom of bad project management, in this case the team is unable to focus on the work.</p>
+
+<p>Workload indicates the current workload and the maximum realistic workload calculated using the efficiency factor. The first number represents the maximum workload given the efficiency factor of the team. If you assign more hours than this the number will be marked with a red color to indicate possible overload. The second number represents the actual maximum workload if the focus factor were perfect (i.e. 1).</p>
+
+<h3>
+<a id="periods" class="anchor" href="#periods" aria-hidden="true"><span class="octicon octicon-link"></span></a>Periods</h3>
+
+<p>The periods box lists all previous periods in this year. Closed periods have a grey color while periods that are still open are black. Next to each closed period the efficiency factor is displayed. This is the percentage completed. This number will be included in the calculation of the average efficiency factor displayed at the bottom of the task list.</p>
+
+<h3>
+<a id="actions-completing-a-task" class="anchor" href="#actions-completing-a-task" aria-hidden="true"><span class="octicon octicon-link"></span></a>Actions, completing a task</h3>
+
+<p>To complete a task select the tasks to be marked as done and select the option 'mark as done' from the action menu below the task list.</p>
+
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/schuttelaar/tasksoup">Tasksoup</a> is maintained by <a href="https://github.com/schuttelaar">schuttelaar</a>.</span>
 
