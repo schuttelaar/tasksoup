@@ -42,10 +42,11 @@ h1 { display:inline; color:#389; line-height:24px;}
 iframe { border-width:0;}
 .progress { background-color: #bfb; height:100px; margin-top:-29px;}
 .column-container { overflow:hidden; height: 28px; text-align:center; vertical-align:middle; }
+.column-container a span { font-weight:	normal;	}
 .small { width: 40px; }
 .medium { width: 120px; }
 .no-padding { padding:0; }
-.icon {width:30px;font-size:30px;text-align:center;vertical-align:middle;display:inline-block;cursor:help;}
+.icon {font-weight: normal;width:30px;font-size:30px;text-align:center;vertical-align:middle;display:inline-block;cursor:help;}
 #notasks { text-align:center; margin-top:40px; color:#888; }
 .help { cursor:help;}
 .inline-scroll { max-height: 146px; overflow-y: scroll;}
