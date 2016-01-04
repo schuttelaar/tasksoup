@@ -112,7 +112,8 @@ if ($currentPeriod->id) {
 
 if ( $currentTeam->id && ( $cmd === 'selectyear' || !$currentPeriod->id ) ) {
 	$year = get_param( 'year', date( 'Y' ) ).'-12-31';
-	$justAperiod = reset( $currentTeam->withCondition(' `end` <= ? ORDER BY (CASE WHEN `start` <= ? THEN 1 ELSE 0 END) DESC, `start` DESC LIMIT 1',array( $year, R::isoDate() ) )->ownPeriodList );
+	$yearBegin = get_param( 'year', date('Y') ).'-01-01';
+	$justAperiod = reset( $currentTeam->withCondition(' `end` <= ? AND end >= ? ORDER BY (CASE WHEN `start` <= ? THEN 1 ELSE 0 END) DESC, `start` DESC LIMIT 1',array( $year, $yearBegin, R::isoDate() ) )->ownPeriodList );
 	if ($justAperiod || $cmd === 'selectyear') {
 		$_SESSION['period_id'] = $justAperiod->id;
 		$_SESSION['team_id'] = $justAperiod->team_id;
