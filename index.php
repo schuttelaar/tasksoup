@@ -400,7 +400,7 @@ switch( $cmd ) {
 				->setLinkToPeriodEditor("?c=editperiod&id={$currentPeriod->id}")
 				->setLinkToAddTask('?c=edittask&id=0'));
 		
-		$template->add($taskList->setClosed($currentPeriod->closed ? 'closed' : 'open')->setLink("http://{$_SERVER['HTTP_HOST']}/?c=selectperiod&period={$currentPeriod->id}"));
+		$template->add($taskList->setClosed($currentPeriod->closed ? 'closed' : 'open')->setLink("http://{$_SERVER['HTTP_HOST']}".get_path_info()."/?c=selectperiod&period={$currentPeriod->id}"));
 		break;
 
 	case 'editperiod':
