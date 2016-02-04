@@ -19,9 +19,20 @@ function cut( $str, $len ) {
 array_walk_recursive( $_POST, function( &$value ){ $value = trim( $value ); }  );
 
 function go_home() { 
-	header('Location: /');
+	header('Location: ' . get_path_info());
 	exit; 
-} 
+}
+
+function get_path_info() {
+	if (!array_key_exists('PATH_INFO', $_SERVER))	{
+		$pos = strpos($_SERVER['REQUEST_URI'], $_SERVER['QUERY_STRING']);
+		$asd = substr($_SERVER['REQUEST_URI'], 0, $pos - 1);
+		return $asd;
+	}
+	else {
+		return trim($_SERVER['PATH_INFO'], '/');
+	}
+}
 
 function get_param( $get, $def='' ) { 
 	return ( isset( $_GET[$get] ) ) ? $_GET[$get] : $def;
@@ -328,9 +339,9 @@ switch( $cmd ) {
 		if (!count($tasks)) {
 			$template->add(
 				$template->getNoTasksYet()
-					->setLinkToPeriodEditor("/?c=editperiod&id={$currentPeriod->id}")
+					->setLinkToPeriodEditor("?c=editperiod&id={$currentPeriod->id}")
 					->setLinkToAddTask('?c=edittask&id=0')
-					->setLinkToTeamEditor("/?c=editteam&id={$currentTeam->id}"));
+					->setLinkToTeamEditor("?c=editteam&id={$currentTeam->id}"));
 			break;
 		}
 		
@@ -382,11 +393,11 @@ switch( $cmd ) {
 			->setTil($currentPeriod->end)
 			->injectRaw('information',$information)
 			->setTotalHours($total)
-			->setLinkToTeamEditor("/?c=editteam&id={$currentTeam->id}");
+			->setLinkToTeamEditor("?c=editteam&id={$currentTeam->id}");
 			
 		if ($currentPeriod->id) $taskList->add( 
 			$taskList->getPeriodButtons()
-				->setLinkToPeriodEditor("/?c=editperiod&id={$currentPeriod->id}")
+				->setLinkToPeriodEditor("?c=editperiod&id={$currentPeriod->id}")
 				->setLinkToAddTask('?c=edittask&id=0'));
 		
 		$template->add($taskList->setClosed($currentPeriod->closed ? 'closed' : 'open')->setLink("http://{$_SERVER['HTTP_HOST']}/?c=selectperiod&period={$currentPeriod->id}"));
@@ -398,17 +409,17 @@ switch( $cmd ) {
 		if (!$period->teamID) $period->teamID = $currentTeam->id;
 
 		$periodEditor = $template->getPeriodEditor()
-			->setActionURL("/?c=saveperiod&id={$period->id}")
+			->setActionURL("?c=saveperiod&id={$period->id}")
 			->setStart($period->start)
 			->setEnd($period->end)
 			->injectAttr('checked'.(($period->closed) ? 'Closed' : 'Open'), 'checked');
-		
+
 		foreach(R::find('team', 'ORDER BY `name` ASC') as $team) {
 			$teamOption = $periodEditor->getTeamOption();
 			$teamOption->setName($team->name)->setTeamID($team->id)->attr('selected', ($team->id == $period->teamID));
 			$periodEditor->add($teamOption);
-		}	
-		
+		}
+
 		$attendanceList = $period->xownAttendanceList;
 		foreach($attendanceList as $attends) $userAttendance[$attends->user_id] = $attends;
 		foreach($period->team->with('ORDER BY `nick` ASC')->sharedUserList as $teamMember) {
@@ -418,39 +429,39 @@ switch( $cmd ) {
 					->setHoursAvailable( isset( $userAttendance[$teamMember->id] ) ? $userAttendance[$teamMember->id]->hours : 0 )
 					->setName($teamMember->nick)
 			);
-		}	 
-		
-		if ($period->id) $periodEditor->add( 
+		}
+
+		if ($period->id) $periodEditor->add(
 			$periodEditor->getDeleteButton()
 				->setLinkToDeletePeriod("?c=delete&type=period&id={$period->id}") );
-		
+
 		$template->add($periodEditor);
 		break;
-	
+
 	case 'edituser':
 		$user = R::load('user',get_param('id'));
 		$userEditor = $template->getUserEditor()
-			->setActionURL("/?c=saveuser&id={$user->id}")
+			->setActionURL("?c=saveuser&id={$user->id}")
 			->setFullname($user->fullname)
 			->setNick($user->nick)
 			->setEmail($user->email)
 			->setPhone($user->phone)
 			->setPhoto($user->photo);
-		
+
 		foreach(R::find('team') as $team) {
 			$teamOption = $userEditor->getTeamOption();
 			$inTeam = (in_array($team->id, array_keys($user->sharedTeamList)));
 			$teamOption->setName($team->name)->setTeamID($team->id)->attr('selected',$inTeam);
 			$userEditor->add($teamOption);
 		}
-		
+
 		if ($user->id) {
 			$userEditor->add( $userEditor->getDeleteButton()
-					->setLinkToDeleteUser("/?c=delete&type=user&id={$user->id}") 
+					->setLinkToDeleteUser("?c=delete&type=user&id={$user->id}")
 			);
 		}
-		
-		$template->add($userEditor);	
+
+		$template->add($userEditor);
 		break;
 
 	case 'editteam':
@@ -459,20 +470,20 @@ switch( $cmd ) {
 			->setActionURL("?c=saveteam&id={$team->id}")
 			->setName($team->name)
 			->setDescription($team->description);
-		
-		if ($team->id) $teamEditor->add( 
+
+		if ($team->id) $teamEditor->add(
 			$teamEditor->getDeleteButton()
-				->setLinkToDeleteTeam("/?c=delete&type=team&id={$team->id}") );
-		
+				->setLinkToDeleteTeam("?c=delete&type=team&id={$team->id}") );
+
 		$template->add($teamEditor);
 		break;
 
 	case 'edittask':
-		$task = R::load( 'task', get_param('id') ); 
+		$task = R::load( 'task', get_param('id') );
 		if (!$task->id) $task->import( array('period' => $currentPeriod, 'progress' => 0, 'prio' => 2 ) );
-		
+
 		$taskEditor = $template->getTaskEditor()
-			->setActionURL("/?c=savetask&id={$task->id}")
+			->setActionURL("?c=savetask&id={$task->id}")
 			->setName($task->name)
 			->setTaskID($task->id)
 			->setClient($task->client)
@@ -511,7 +522,7 @@ switch( $cmd ) {
 			$taskEditor->add($resource);
 		}
 		if ($task->id) $taskEditor->add( 
-			$taskEditor->getDeleteButton()->setLinkToDeleteTask("/?c=delete&type=task&id={$task->id}") );
+			$taskEditor->getDeleteButton()->setLinkToDeleteTask("?c=delete&type=task&id={$task->id}") );
 		$template->add($taskEditor);
 		break;
 }
