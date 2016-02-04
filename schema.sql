@@ -19,7 +19,7 @@ CREATE TABLE `attendance` ( `id` INTEGER PRIMARY KEY AUTOINCREMENT  ,`hours` INT
 						 ON DELETE SET NULL ON UPDATE SET NULL );
 CREATE INDEX index_foreignkey_attendance_user ON `attendance` (user_id);
 CREATE INDEX index_foreignkey_attendance_period ON `attendance` (period_id);
-CREATE TABLE `task` ( `id` INTEGER PRIMARY KEY AUTOINCREMENT  ,`name` TEXT,`client` TEXT,`contact` TEXT,`due` TEXT,`prio` INTEGER,`done` INTEGER,`budget` TEXT,`project` TEXT,`description` TEXT,`notes` TEXT,`progress` INTEGER,`start` NUMERIC,`end` NUMERIC,`period_id` INTEGER  , FOREIGN KEY(`period_id`)
+CREATE TABLE `task` ( `id` INTEGER PRIMARY KEY AUTOINCREMENT  ,`name` TEXT,`client` TEXT,`contact` TEXT,`due` TEXT,`type` INTEGER,`prio` INTEGER,`done` INTEGER,`budget` TEXT,`project` TEXT,`description` TEXT,`notes` TEXT,`progress` INTEGER,`start` NUMERIC,`end` NUMERIC,`period_id` INTEGER  , FOREIGN KEY(`period_id`)
 						 REFERENCES `period`(`id`)
 						 ON DELETE SET NULL ON UPDATE SET NULL );
 CREATE INDEX index_foreignkey_task_period ON `task` (period_id);

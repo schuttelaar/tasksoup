@@ -32,10 +32,15 @@ window.onload = function(){
 			for(var i=0; i<a.length; i++) a[i].checked = this.checked;
 		}
 	}
-	if (document.getElementById('sidebar')){ 
-		var iframe = document.createElement('iframe');
-		iframe.style.cssText = 'width:100%;height:400px;margin-top:20px;';
-		iframe.src = 'chart.html';document.getElementById('sidebar').appendChild(iframe);
+	if (document.getElementById('sidebar')){
+		var iframe1 = document.createElement('iframe');
+		iframe1.className = 'chart-hours';
+		iframe1.src = 'chart_hours.html';
+		var iframe2 = document.createElement('iframe');
+		iframe2.className = 'chart-types';
+		iframe2.src = 'chart_types.html';
+		document.getElementById('sidebar').appendChild(iframe1);
+		document.getElementById('sidebar').appendChild(iframe2);
 	}
 	var tasks = document.querySelectorAll('a.todo,a.done,a.red');
 	for(var j=0; j<tasks.length; j++) {

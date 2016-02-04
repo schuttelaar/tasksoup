@@ -1,12 +1,13 @@
 <html>
 	<head></head>
 	<body>
-	<canvas id="myChart" width="260" height="280"></canvas>
+	<canvas id="myChartHours" width="260" height="280"></canvas>
 	<script src="chartjs.js"></script>
 	<script>
+	// Hours comparison
 	Chart.defaults.global.scaleBeginAtZero = true;
 	Chart.defaults.global.animation = false;
-	var ctx = document.getElementById("myChart").getContext("2d");
+	var ctx = document.getElementById("myChartHours").getContext("2d");
 	var tasks = window.parent.document.querySelectorAll('[data-start]');
 	var periodRangeDef = window.parent.document.querySelectorAll('[data-period-start]')[0];
 	if (periodRangeDef) {
@@ -44,7 +45,7 @@
 			labels: days,
 			datasets: [
 				{
-					label: "My First dataset",
+					label: "Hours done",
 					fillColor: "rgba(240,200,200,0.2)",
 					strokeColor: "#FFA500",
 					pointColor: "#FFA500",
@@ -54,7 +55,7 @@
 					data: dones
 				},
 				{
-					label: "My Second dataset",
+					label: "Hours planned",
 					fillColor: "rgba(240,240,200,0.2)",
 					strokeColor: "#389",
 					pointColor: "#389",

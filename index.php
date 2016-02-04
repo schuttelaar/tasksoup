@@ -100,6 +100,21 @@ class Model_Task extends SimpleModel
 }
 
 $priorityLabels = array('⏳ t', '-1', '-', '+1', '☢ +2', '⚡ a');
+$taskTypeLabels = array('Bug', 'Change', 'Improvement', 'Feature', 'Task');
+$taskTypeDescriptions = array(
+	'Anything that breaks the application, unexpected behavior, or showstopping errors.',
+	'Anything that changes the current behavior of the application, where the old behavior cannot be used anymore.',
+	'All things that make a current behavior or method better.',
+	'Anything new.',
+	'Something like research, brainstorming, server config, anything that takes time but does not involve the application.',
+);
+$taskTypeColors = array(
+	'{"color":"#F7464A", "highlight": "#FF5A5E", "label": "Red"}',
+	'{"color":"#FDB45C", "highlight": "#FDB45C", "label": "Yellow"}',
+	'{"color":"#949FB1", "highlight": "#A8B3C5", "label": "Grey"}',
+	'{"color":"#46BFBD", "highlight": "#5AD3D1", "label": "Green"}',
+	'{"color":"#4D5360", "highlight": "#616774", "label": "Dark Grey"}',
+);
 $cmd            = get_param( 'c', 'main' );
 $currentTeamID  = ( isset( $_SESSION['team_id'] ) ) ? $_SESSION['team_id'] : 0;
 $currentTeam    = R::load( 'team', $currentTeamID );
@@ -210,7 +225,7 @@ switch( $cmd ) {
 	case 'savetask':
 		$task = R::load( 'task', get_param( 'id' ) );
 		$task->import( $_POST, 
-			'name,client,contact,project,budget,notes,description,due,prio,team_id,progress,done,period_id');
+			'name,client,contact,project,budget,notes,description,due,type,prio,team_id,progress,done,period_id');
 		
 		$work = array();
 		foreach( $_POST['work'] as $userID => $hours ) {
@@ -369,6 +384,11 @@ switch( $cmd ) {
 				->setProgressColor(($warning) ? 'red' : 'normal')
 				->setProgressText(($task->due=='') ? $percentage.' %' : $task->due)
 				->setProgressBarWidth($percentage)
+				->setTaskTypeLevel($task->type)
+				->setTaskTypeLabel($taskTypeLabels[$task->type])
+				->setTaskTypeColor($taskTypeColors[$task->type])
+				->setTaskTypeDescription($taskTypeDescriptions[$task->type])
+				->setPriorityLabel($priorityLabels[$task->prio])
 				->setPriorityLevel($task->prio)
 				->setPriorityLabel($priorityLabels[$task->prio])
 				->setStatus(($task->done) ? 'done' : ( $total > $realAvailHrs ? 'red' : 'todo'))
@@ -494,7 +514,14 @@ switch( $cmd ) {
 			->setProgress($task->progress)
 			->setDescription($task->description)
 			->setNotes($task->notes);
-			
+
+		foreach($taskTypeLabels as $taskTypeLevel => $taskTypeLabel) {
+			$typeOption = $taskEditor->getTypeOption();
+			$typeOption->setTaskTypeLevel($taskTypeLevel)->setTaskTypeLabel($taskTypeLabel);
+			$typeOption->attr('selected', ($task->type == $taskTypeLevel));
+			$taskEditor->add($typeOption);
+		}
+
 		foreach($priorityLabels as $priorityLevel => $priorityLabel) {
 			$priorityOption = $taskEditor->getPriorityOption();
 			$priorityOption->setPriorityLevel($priorityLevel)->setPriorityLabel($priorityLabel);

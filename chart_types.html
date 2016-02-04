@@ -1,0 +1,30 @@
+<html>
+	<head></head>
+	<body>
+	<canvas id="myChartTypes" width="260" height="280"></canvas>
+	<script src="chartjs.js"></script>
+	<script>
+	// Types comparison
+	Chart.defaults.global.scaleBeginAtZero = true;
+	Chart.defaults.global.animation = false;
+	var ctx = document.getElementById("myChartTypes").getContext("2d");
+	var taskTypes = window.parent.document.querySelectorAll('[data-task-type]');
+	var dataObject = {}
+	for(var i=0; i<taskTypes.length; i++) {
+		var key = taskTypes[i].getAttribute('data-task-type');
+		if (dataObject[key]===undefined) dataObject[key] = {
+			label: key,
+			value: 1,
+			color: JSON.parse(taskTypes[i].getAttribute('data-task-type-color')).color,
+			highlight: JSON.parse(taskTypes[i].getAttribute('data-task-type-color')).highlight
+		}
+		else dataObject[key].value++;
+	}
+	var data = [];
+	for(var key in dataObject) {
+		data.push(dataObject[key]);
+	}
+	if (data.length>1) myLineChart = new Chart(ctx).Doughnut(data);
+	</script>
+	</body>
+</html>

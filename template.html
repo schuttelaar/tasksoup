@@ -92,6 +92,7 @@ or <a href="#linkToTeamEditor#" title="Click here to edit the currently selected
 				<th><div title="People working on the task." style="width:120px;text-align:center;">people</div></th>
 				<th><div title="Hours booked for this task." style="width:40px;">hrs</div></th>
 				<th><div title="Deadline for this task and progress." style="width:120px;text-align:center;">due/progress</div></th>
+				<th><div title="Type of this task." style="width:100px;text-align:center;">type</div></th>
 				<th><div title="Priority of this task." style="width:40px;text-align:center;">prio</div></th>
 				<th title="Customer"><div style="width:180px">client</div></th>
 				<th title="Name of the task." style="width:100%;">name</th>
@@ -122,6 +123,9 @@ or <a href="#linkToTeamEditor#" title="Click here to edit the currently selected
 						</span>
 						<div class="progress bar" style="width:#progressBarWidth#%;"></div>
 					</div>
+				</td>
+				<td title="#taskTypeDescription#" class="prio typelevel#taskTypeLevel#">
+					<span data-task-type="#taskTypeLabel#" data-task-type-color="#taskTypeColor#">#taskTypeLabel#</span>
 				</td>
 				<td title="This task has priority level: #priorityLevel#." class="prio level#priorityLevel#">
 					#priorityLabel#
@@ -353,7 +357,14 @@ or <a href="#linkToTeamEditor#" title="Click here to edit the currently selected
 			<label for="field_due" title="Please indicate a deadline for this task (optional).">Due</label>
 			<input id="field_due" placeholder="YYYY-MM-DD" title="Deadline" type="date" pattern="\d\d\d\d\-\d\d\-\d\d" name="due" value="#due#" />
 		</div>
-		
+
+		<div class="field"><label for="field_type" title="Please indicate the type of this task.">Type</label>
+			<select id="field_type" title="Type of task." name="type">
+				<!-- cut:typeOption -->
+				<option data-stampte="#selected?#" value="#taskTypeLevel#">#taskTypeLabel#</option>
+				<!-- /cut:typeOption -->
+			</select>
+		</div>
 		<div class="field"><label for="field_prio" title="Please indicate the urgency of this task.">Priority</label>
 			<select id="field_prio" title="Urgency" name="prio">
 				<!-- cut:priorityOption -->
