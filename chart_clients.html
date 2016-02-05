@@ -1,0 +1,31 @@
+<html>
+	<head></head>
+	<body style="overflow: hidden;">
+	<canvas id="myChartClients" width="130" height="140"></canvas>
+	<script src="chartjs.js"></script>
+	<script src="randomColor.min.js"></script>
+	<script>
+	// Types comparison
+	Chart.defaults.global.scaleBeginAtZero = true;
+	Chart.defaults.global.animation = false;
+	var ctx = document.getElementById("myChartClients").getContext("2d");
+	var clients = window.parent.document.querySelectorAll('[data-client]');
+	var dataObject = {}
+	for(var i=0; i<clients.length; i++) {
+		var key = clients[i].getAttribute('data-client');
+		if (dataObject[key]===undefined) dataObject[key] = {
+			label: key.charAt(0).toUpperCase() + key.slice(1),
+			value: 1,
+			color: randomColor({seed: key}),
+			highlight: randomColor({seed: key, luminosity: 'light'})
+		}
+		else dataObject[key].value++;
+	}
+	var data = [];
+	for(var key in dataObject) {
+		data.push(dataObject[key]);
+	}
+	if (data.length>1) myLineChart = new Chart(ctx).Pie(data);
+	</script>
+	</body>
+</html>

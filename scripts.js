@@ -33,14 +33,18 @@ window.onload = function(){
 		}
 	}
 	if (document.getElementById('sidebar')){
-		var iframe1 = document.createElement('iframe');
-		iframe1.className = 'chart-hours';
-		iframe1.src = 'chart_hours.html';
-		var iframe2 = document.createElement('iframe');
-		iframe2.className = 'chart-types';
-		iframe2.src = 'chart_types.html';
-		document.getElementById('sidebar').appendChild(iframe1);
-		document.getElementById('sidebar').appendChild(iframe2);
+		var iframeHours = document.createElement('iframe');
+		iframeHours.className = 'chart-hours';
+		iframeHours.src = 'chart_hours.html';
+		var iframeTypes = document.createElement('iframe');
+		iframeTypes.className = 'chart-types';
+		iframeTypes.src = 'chart_types.html';
+		var iframeClients = document.createElement('iframe');
+		iframeClients.className = 'chart-clients';
+		iframeClients.src = 'chart_clients.html';
+		document.getElementById('sidebar').appendChild(iframeHours);
+		document.getElementById('sidebar').appendChild(iframeTypes);
+		document.getElementById('sidebar').appendChild(iframeClients);
 	}
 	var tasks = document.querySelectorAll('a.todo,a.done,a.red');
 	for(var j=0; j<tasks.length; j++) {
