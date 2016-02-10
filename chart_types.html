@@ -12,19 +12,23 @@
 	var dataObject = {}
 	for(var i=0; i<taskTypes.length; i++) {
 		var key = taskTypes[i].getAttribute('data-task-type');
-		if (dataObject[key]===undefined) dataObject[key] = {
-			label: key,
-			value: 1,
-			color: JSON.parse(taskTypes[i].getAttribute('data-task-type-color')).color,
-			highlight: JSON.parse(taskTypes[i].getAttribute('data-task-type-color')).highlight
+		if (key.length > 0) {
+			if (dataObject[key]===undefined) dataObject[key] = {
+				label: key,
+				value: 1,
+				color: JSON.parse(taskTypes[i].getAttribute('data-task-type-color')).color,
+				highlight: JSON.parse(taskTypes[i].getAttribute('data-task-type-color')).highlight
+			}
+			else {
+				dataObject[key].value++;
+			}
 		}
-		else dataObject[key].value++;
 	}
 	var data = [];
 	for(var key in dataObject) {
 		data.push(dataObject[key]);
 	}
-	if (data.length>1) myLineChart = new Chart(ctx).Doughnut(data);
+	if (data.length>0) myLineChart = new Chart(ctx).Doughnut(data);
 	</script>
 	</body>
 </html>
