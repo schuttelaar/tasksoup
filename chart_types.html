@@ -15,17 +15,20 @@
 		if (key.length > 0) {
 			if (dataObject[key]===undefined) dataObject[key] = {
 				label: key,
-				value: 1,
+				amount: 1,
+				value: parseInt(taskTypes[i].getAttribute('data-hours')),
 				color: JSON.parse(taskTypes[i].getAttribute('data-task-type-color')).color,
 				highlight: JSON.parse(taskTypes[i].getAttribute('data-task-type-color')).highlight
 			}
 			else {
-				dataObject[key].value++;
+				dataObject[key].amount++;
+				dataObject[key].value += parseInt(clients[i].getAttribute('data-hours'));
 			}
 		}
 	}
 	var data = [];
 	for(var key in dataObject) {
+		dataObject[key].label = dataObject[key].label + ' (' + dataObject[key].amount + 'x)';
 		data.push(dataObject[key]);
 	}
 	if (data.length>0) myLineChart = new Chart(ctx).Doughnut(data);
