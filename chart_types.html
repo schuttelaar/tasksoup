@@ -8,6 +8,7 @@
 	Chart.defaults.global.scaleBeginAtZero = true;
 	Chart.defaults.global.animation = false;
 	Chart.defaults.global.tooltipFontSize = 12;
+	Chart.defaults.global.tooltipTemplate = "<%if (label){%><%=label%>: <%}%><%= value %> hrs";
 	var ctx = document.getElementById("myChartTypes").getContext("2d");
 	var taskTypes = window.parent.document.querySelectorAll('[data-task-type]');
 	var dataObject = {}
