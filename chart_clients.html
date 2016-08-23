@@ -1,0 +1,38 @@
+<html>
+	<head></head>
+	<body style="overflow: hidden;">
+	<canvas id="myChartClients" width="130" height="140"></canvas>
+	<script src="chartjs.js"></script>
+	<script src="randomColor.min.js"></script>
+	<script>
+	// Types comparison
+	Chart.defaults.global.scaleBeginAtZero = true;
+	Chart.defaults.global.animation = false;
+	Chart.defaults.global.tooltipFontSize = 12;
+	Chart.defaults.global.tooltipTemplate = "<%if (label){%><%=label%>: <%}%><%= value %> hrs";
+	var ctx = document.getElementById("myChartClients").getContext("2d");
+	var clients = window.parent.document.querySelectorAll('[data-client]');
+	var dataObject = {}
+	for(var i=0; i<clients.length; i++) {
+		var key = clients[i].getAttribute('data-client');
+		if (dataObject[key]===undefined) dataObject[key] = {
+			label: key.charAt(0).toUpperCase() + key.slice(1),
+			amount: 1,
+			value: parseInt(clients[i].getAttribute('data-hours')),
+			color: randomColor({seed: key}),
+			highlight: randomColor({seed: key, luminosity: 'light'})
+		}
+		else {
+			dataObject[key].amount++;
+			dataObject[key].value += parseInt(clients[i].getAttribute('data-hours'));
+		}
+	}
+	var data = [];
+	for(var key in dataObject) {
+		dataObject[key].label = dataObject[key].label + ' (' + dataObject[key].amount + 'x)';
+		data.push(dataObject[key]);
+	}
+	if (data.length>0) myLineChart = new Chart(ctx).Pie(data);
+	</script>
+	</body>
+</html>

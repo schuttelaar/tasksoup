@@ -1,0 +1,39 @@
+<html>
+	<head></head>
+	<body style="overflow: hidden;">
+	<canvas id="myChartTypes" width="130" height="140"></canvas>
+	<script src="chartjs.js"></script>
+	<script>
+	// Types comparison
+	Chart.defaults.global.scaleBeginAtZero = true;
+	Chart.defaults.global.animation = false;
+	Chart.defaults.global.tooltipFontSize = 12;
+	Chart.defaults.global.tooltipTemplate = "<%if (label){%><%=label%>: <%}%><%= value %> hrs";
+	var ctx = document.getElementById("myChartTypes").getContext("2d");
+	var taskTypes = window.parent.document.querySelectorAll('[data-task-type]');
+	var dataObject = {}
+	for(var i=0; i<taskTypes.length; i++) {
+		var key = taskTypes[i].getAttribute('data-task-type');
+		if (key.length > 0) {
+			if (dataObject[key]===undefined) dataObject[key] = {
+				label: key,
+				amount: 1,
+				value: parseInt(taskTypes[i].getAttribute('data-hours')),
+				color: JSON.parse(taskTypes[i].getAttribute('data-task-type-color')).color,
+				highlight: JSON.parse(taskTypes[i].getAttribute('data-task-type-color')).highlight
+			}
+			else {
+				dataObject[key].amount++;
+				dataObject[key].value += parseInt(taskTypes[i].getAttribute('data-hours'));
+			}
+		}
+	}
+	var data = [];
+	for(var key in dataObject) {
+		dataObject[key].label = dataObject[key].label + ' (' + dataObject[key].amount + 'x)';
+		data.push(dataObject[key]);
+	}
+	if (data.length>0) myLineChart = new Chart(ctx).Doughnut(data);
+	</script>
+	</body>
+</html>

@@ -34,7 +34,7 @@ h1 { display:inline; color:#389; line-height:24px;}
 .prio { text-align:center;}
 .level0 { background-color: #AAAACC; }
 .level4 { background-color: #FFA500; }
-.level5 { background-color: #FF2222;  }
+.level5, .typelevel0 { background-color: #FF2222; }
 .task-id { opacity:0.4;float:right;margin-right:10px; }
 .closed,.grey { color: #888; }
 .done { color: #389; }
@@ -50,3 +50,6 @@ iframe { border-width:0;}
 #notasks { text-align:center; margin-top:40px; color:#888; }
 .help { cursor:help;}
 .inline-scroll { max-height: 146px; overflow-y: scroll;}
+.chart-hours { width:100%;height:300px;margin-top:20px; overflow: hidden;}
+.chart-types { width:50%;height:150px;margin-top:0; overflow: hidden;}
+.chart-clients { width:50%;height:150px;margin-top:0; overflow: hidden;}

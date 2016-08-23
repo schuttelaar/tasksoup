@@ -5,7 +5,7 @@ window.onload = function(){
 		for(var j=1; j<trs.length; j++) trs[j].style.opacity=1; //reset all TRs	
 		for(var j=1; j<trs.length; j++) {
 			if (e.target.getAttribute('class')==='photo') { //Filter photos
-				if (!trs[j].querySelectorAll('td img[alt="'+e.target.getAttribute('alt')+'"]').length) {
+				if (trs[j].getAttribute('data-nicks').indexOf('|'+e.target.getAttribute('alt')+'|') == -1) {
 					trs[j].style.opacity=0.2;
 				}
 
@@ -32,10 +32,19 @@ window.onload = function(){
 			for(var i=0; i<a.length; i++) a[i].checked = this.checked;
 		}
 	}
-	if (document.getElementById('sidebar')){ 
-		var iframe = document.createElement('iframe');
-		iframe.style.cssText = 'width:100%;height:400px;margin-top:20px;';
-		iframe.src = 'chart.html';document.getElementById('sidebar').appendChild(iframe);
+	if (document.getElementById('sidebar')){
+		var iframeHours = document.createElement('iframe');
+		iframeHours.className = 'chart-hours';
+		iframeHours.src = 'chart_hours.html';
+		var iframeTypes = document.createElement('iframe');
+		iframeTypes.className = 'chart-types';
+		iframeTypes.src = 'chart_types.html';
+		var iframeClients = document.createElement('iframe');
+		iframeClients.className = 'chart-clients';
+		iframeClients.src = 'chart_clients.html';
+		document.getElementById('sidebar').appendChild(iframeHours);
+		document.getElementById('sidebar').appendChild(iframeTypes);
+		document.getElementById('sidebar').appendChild(iframeClients);
 	}
 	var tasks = document.querySelectorAll('a.todo,a.done,a.red');
 	for(var j=0; j<tasks.length; j++) {

@@ -19,9 +19,20 @@ function cut( $str, $len ) {
 array_walk_recursive( $_POST, function( &$value ){ $value = trim( $value ); }  );
 
 function go_home() { 
-	header('Location: /');
+	header('Location: ' . get_path_info());
 	exit; 
-} 
+}
+
+function get_path_info() {
+	if (!array_key_exists('PATH_INFO', $_SERVER))	{
+		$pos = strpos($_SERVER['REQUEST_URI'], $_SERVER['QUERY_STRING']);
+		$asd = substr($_SERVER['REQUEST_URI'], 0, $pos - 1);
+		return $asd;
+	}
+	else {
+		return trim($_SERVER['PATH_INFO'], '/');
+	}
+}
 
 function get_param( $get, $def='' ) { 
 	return ( isset( $_GET[$get] ) ) ? $_GET[$get] : $def;
@@ -89,6 +100,21 @@ class Model_Task extends SimpleModel
 }
 
 $priorityLabels = array('⏳ t', '-1', '-', '+1', '☢ +2', '⚡ a');
+$taskTypeLabels = array('Bug', 'Change', 'Improvement', 'Feature', 'Task');
+$taskTypeDescriptions = array(
+	'Anything that breaks the application, unexpected behavior, or showstopping errors.',
+	'Anything that changes the current behavior of the application, where the old behavior cannot be used anymore.',
+	'All things that make a current behavior or method better.',
+	'Anything new.',
+	'Something like research, brainstorming, server config, anything that takes time but does not involve the application.',
+);
+$taskTypeColors = array(
+	'{"color":"#F7464A", "highlight": "#FF5A5E", "label": "Red"}',
+	'{"color":"#FDB45C", "highlight": "#FDB45C", "label": "Yellow"}',
+	'{"color":"#949FB1", "highlight": "#A8B3C5", "label": "Grey"}',
+	'{"color":"#46BFBD", "highlight": "#5AD3D1", "label": "Green"}',
+	'{"color":"#4D5360", "highlight": "#616774", "label": "Dark Grey"}',
+);
 $cmd            = get_param( 'c', 'main' );
 $currentTeamID  = ( isset( $_SESSION['team_id'] ) ) ? $_SESSION['team_id'] : 0;
 $currentTeam    = R::load( 'team', $currentTeamID );
@@ -199,7 +225,7 @@ switch( $cmd ) {
 	case 'savetask':
 		$task = R::load( 'task', get_param( 'id' ) );
 		$task->import( $_POST, 
-			'name,client,contact,project,budget,notes,description,due,prio,team_id,progress,done,period_id');
+			'name,client,contact,project,budget,notes,description,due,type,prio,team_id,progress,done,period_id');
 		
 		$work = array();
 		foreach( $_POST['work'] as $userID => $hours ) {
@@ -328,16 +354,17 @@ switch( $cmd ) {
 		if (!count($tasks)) {
 			$template->add(
 				$template->getNoTasksYet()
-					->setLinkToPeriodEditor("/?c=editperiod&id={$currentPeriod->id}")
+					->setLinkToPeriodEditor("?c=editperiod&id={$currentPeriod->id}")
 					->setLinkToAddTask('?c=edittask&id=0')
-					->setLinkToTeamEditor("/?c=editteam&id={$currentTeam->id}"));
+					->setLinkToTeamEditor("?c=editteam&id={$currentTeam->id}"));
 			break;
 		}
-		
+
 		foreach($tasks as $task) {
 			$taskRow = $taskList->getTask();
 			$taskRow->setId($task->id);
 			$weight = $ppl = 0;
+			$nicks = array();
 			foreach( $task->xownWorkList as $work ) {
 				$weight += $work->hours;
 				if (!$work->hours) continue;
@@ -346,7 +373,9 @@ switch( $cmd ) {
 					->setTooltip($work->user->nick)
 					->setDescription($work->user->nick);
 				if (++$ppl < 4) $taskRow->add($photo);
+				$nicks[] = $work->user->nick;
 			}
+			$taskRow->setNicks('|' . implode('|', $nicks) . '|');
 			if (!$task->done) $workload += $weight;
 			$total += $weight;
 			$warning = (!$task->done && $task->due != '' && strtotime($task->due)<time()-(3600*10));
@@ -358,6 +387,11 @@ switch( $cmd ) {
 				->setProgressColor(($warning) ? 'red' : 'normal')
 				->setProgressText(($task->due=='') ? $percentage.' %' : $task->due)
 				->setProgressBarWidth($percentage)
+				->setTaskTypeLevel($task->type)
+				->setTaskTypeLabel($taskTypeLabels[$task->type])
+				->setTaskTypeColor($taskTypeColors[$task->type])
+				->setTaskTypeDescription($taskTypeDescriptions[$task->type])
+				->setPriorityLabel($priorityLabels[$task->prio])
 				->setPriorityLevel($task->prio)
 				->setPriorityLabel($priorityLabels[$task->prio])
 				->setStatus(($task->done) ? 'done' : ( $total > $realAvailHrs ? 'red' : 'todo'))
@@ -382,14 +416,14 @@ switch( $cmd ) {
 			->setTil($currentPeriod->end)
 			->injectRaw('information',$information)
 			->setTotalHours($total)
-			->setLinkToTeamEditor("/?c=editteam&id={$currentTeam->id}");
+			->setLinkToTeamEditor("?c=editteam&id={$currentTeam->id}");
 			
 		if ($currentPeriod->id) $taskList->add( 
 			$taskList->getPeriodButtons()
-				->setLinkToPeriodEditor("/?c=editperiod&id={$currentPeriod->id}")
+				->setLinkToPeriodEditor("?c=editperiod&id={$currentPeriod->id}")
 				->setLinkToAddTask('?c=edittask&id=0'));
 		
-		$template->add($taskList->setClosed($currentPeriod->closed ? 'closed' : 'open')->setLink("http://{$_SERVER['HTTP_HOST']}/?c=selectperiod&period={$currentPeriod->id}"));
+		$template->add($taskList->setClosed($currentPeriod->closed ? 'closed' : 'open')->setLink("http://{$_SERVER['HTTP_HOST']}".get_path_info()."/?c=selectperiod&period={$currentPeriod->id}"));
 		break;
 
 	case 'editperiod':
@@ -398,17 +432,17 @@ switch( $cmd ) {
 		if (!$period->teamID) $period->teamID = $currentTeam->id;
 
 		$periodEditor = $template->getPeriodEditor()
-			->setActionURL("/?c=saveperiod&id={$period->id}")
+			->setActionURL("?c=saveperiod&id={$period->id}")
 			->setStart($period->start)
 			->setEnd($period->end)
 			->injectAttr('checked'.(($period->closed) ? 'Closed' : 'Open'), 'checked');
-		
+
 		foreach(R::find('team', 'ORDER BY `name` ASC') as $team) {
 			$teamOption = $periodEditor->getTeamOption();
 			$teamOption->setName($team->name)->setTeamID($team->id)->attr('selected', ($team->id == $period->teamID));
 			$periodEditor->add($teamOption);
-		}	
-		
+		}
+
 		$attendanceList = $period->xownAttendanceList;
 		foreach($attendanceList as $attends) $userAttendance[$attends->user_id] = $attends;
 		foreach($period->team->with('ORDER BY `nick` ASC')->sharedUserList as $teamMember) {
@@ -418,39 +452,39 @@ switch( $cmd ) {
 					->setHoursAvailable( isset( $userAttendance[$teamMember->id] ) ? $userAttendance[$teamMember->id]->hours : 0 )
 					->setName($teamMember->nick)
 			);
-		}	 
-		
-		if ($period->id) $periodEditor->add( 
+		}
+
+		if ($period->id) $periodEditor->add(
 			$periodEditor->getDeleteButton()
 				->setLinkToDeletePeriod("?c=delete&type=period&id={$period->id}") );
-		
+
 		$template->add($periodEditor);
 		break;
-	
+
 	case 'edituser':
 		$user = R::load('user',get_param('id'));
 		$userEditor = $template->getUserEditor()
-			->setActionURL("/?c=saveuser&id={$user->id}")
+			->setActionURL("?c=saveuser&id={$user->id}")
 			->setFullname($user->fullname)
 			->setNick($user->nick)
 			->setEmail($user->email)
 			->setPhone($user->phone)
 			->setPhoto($user->photo);
-		
+
 		foreach(R::find('team') as $team) {
 			$teamOption = $userEditor->getTeamOption();
 			$inTeam = (in_array($team->id, array_keys($user->sharedTeamList)));
 			$teamOption->setName($team->name)->setTeamID($team->id)->attr('selected',$inTeam);
 			$userEditor->add($teamOption);
 		}
-		
+
 		if ($user->id) {
 			$userEditor->add( $userEditor->getDeleteButton()
-					->setLinkToDeleteUser("/?c=delete&type=user&id={$user->id}") 
+					->setLinkToDeleteUser("?c=delete&type=user&id={$user->id}")
 			);
 		}
-		
-		$template->add($userEditor);	
+
+		$template->add($userEditor);
 		break;
 
 	case 'editteam':
@@ -459,20 +493,20 @@ switch( $cmd ) {
 			->setActionURL("?c=saveteam&id={$team->id}")
 			->setName($team->name)
 			->setDescription($team->description);
-		
-		if ($team->id) $teamEditor->add( 
+
+		if ($team->id) $teamEditor->add(
 			$teamEditor->getDeleteButton()
-				->setLinkToDeleteTeam("/?c=delete&type=team&id={$team->id}") );
-		
+				->setLinkToDeleteTeam("?c=delete&type=team&id={$team->id}") );
+
 		$template->add($teamEditor);
 		break;
 
 	case 'edittask':
-		$task = R::load( 'task', get_param('id') ); 
+		$task = R::load( 'task', get_param('id') );
 		if (!$task->id) $task->import( array('period' => $currentPeriod, 'progress' => 0, 'prio' => 2 ) );
-		
+
 		$taskEditor = $template->getTaskEditor()
-			->setActionURL("/?c=savetask&id={$task->id}")
+			->setActionURL("?c=savetask&id={$task->id}")
 			->setName($task->name)
 			->setTaskID($task->id)
 			->setClient($task->client)
@@ -483,7 +517,14 @@ switch( $cmd ) {
 			->setProgress($task->progress)
 			->setDescription($task->description)
 			->setNotes($task->notes);
-			
+
+		foreach($taskTypeLabels as $taskTypeLevel => $taskTypeLabel) {
+			$typeOption = $taskEditor->getTypeOption();
+			$typeOption->setTaskTypeLevel($taskTypeLevel)->setTaskTypeLabel($taskTypeLabel);
+			$typeOption->attr('selected', ($task->type == $taskTypeLevel));
+			$taskEditor->add($typeOption);
+		}
+
 		foreach($priorityLabels as $priorityLevel => $priorityLabel) {
 			$priorityOption = $taskEditor->getPriorityOption();
 			$priorityOption->setPriorityLevel($priorityLevel)->setPriorityLabel($priorityLabel);
@@ -511,7 +552,7 @@ switch( $cmd ) {
 			$taskEditor->add($resource);
 		}
 		if ($task->id) $taskEditor->add( 
-			$taskEditor->getDeleteButton()->setLinkToDeleteTask("/?c=delete&type=task&id={$task->id}") );
+			$taskEditor->getDeleteButton()->setLinkToDeleteTask("?c=delete&type=task&id={$task->id}") );
 		$template->add($taskEditor);
 		break;
 }

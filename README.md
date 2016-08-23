@@ -35,5 +35,12 @@ Run the create_database.sh script to import the schema into your database.
 
 That's all.
 
+## Upgrading
 
+Just pull the next release, find the line that sets up the database, which looks something like this:
+
+    R::setup( 'sqlite:database/data.sql', NULL, NULL, TRUE ); //<-- CONFIGURE YOUR DATABASE HERE
+
+Change `TRUE` to `FALSE` to unfreeze the database, this way any new columns will be added automatically.
+After a finished sprint you can always put it back for a better performance.
 
